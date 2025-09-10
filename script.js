@@ -128,7 +128,7 @@ const connectWebSocket = () => {
 	const wsUrl =
 		window.location.protocol === "https:"
 			? `wss://${window.location.host}`
-			: `wss://chat-backend-90pn.onrender.com`;
+			: `https://chat-backend-90pn.onrender.com`;
 
 	websocket = new WebSocket(wsUrl);
 
