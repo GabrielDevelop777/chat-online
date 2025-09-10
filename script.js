@@ -68,9 +68,9 @@ const renderUserList = (users) => {
 		userElement.className =
 			"flex items-center gap-3 p-2 rounded-lg mb-2 transition hover:bg-slate-700/50";
 		userElement.innerHTML = `
-                    <div class="w-3 h-3 rounded-full" style="background-color: ${u.color};"></div>
-                    <span class="font-medium text-slate-300">${u.name}</span>
-                `;
+                      <div class="w-3 h-3 rounded-full" style="background-color: ${u.color};"></div>
+                      <span class="font-medium text-slate-300">${u.name}</span>
+                  `;
 		onlineUsers.appendChild(userElement);
 	});
 };
@@ -93,16 +93,16 @@ const renderChatMessage = (message) => {
 	const avatar = `<div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0" style="background-color: ${sender.color};">${sender.name.charAt(0).toUpperCase()}</div>`;
 
 	const messageBubble = `
-                <div class="max-w-xs lg:max-w-md">
-                    <div class="flex items-baseline gap-2 ${isSelf ? "justify-end" : ""}">
-                        <span class="font-bold text-sm" style="color: ${sender.color};">${isSelf ? "Você" : sender.name}</span>
-                        <span class="text-xs text-slate-500">${timestamp}</span>
-                    </div>
-                    <div class="mt-1 px-4 py-2 rounded-xl break-words ${isSelf ? "bg-indigo-600 rounded-br-none" : "bg-slate-700 rounded-bl-none"}">
-                        ${content}
-                    </div>
-                </div>
-            `;
+                  <div class="max-w-xs lg:max-w-md">
+                      <div class="flex items-baseline gap-2 ${isSelf ? "justify-end" : ""}">
+                          <span class="font-bold text-sm" style="color: ${sender.color};">${isSelf ? "Você" : sender.name}</span>
+                          <span class="text-xs text-slate-500">${timestamp}</span>
+                      </div>
+                      <div class="mt-1 px-4 py-2 rounded-xl break-words ${isSelf ? "bg-indigo-600 rounded-br-none" : "bg-slate-700 rounded-bl-none"}">
+                          ${content}
+                      </div>
+                  </div>
+              `;
 
 	messageWrapper.innerHTML = isSelf
 		? messageBubble + avatar
@@ -113,22 +113,20 @@ const renderChatMessage = (message) => {
 
 const updateUserInfo = () => {
 	userInfo.innerHTML = `
-                <p class="text-sm text-slate-400">Logado como:</p>
-                <div class="flex items-center gap-3 mt-2">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white" style="background-color: ${user.color};">${user.name.charAt(0).toUpperCase()}</div>
-                    <span class="font-semibold">${user.name}</span>
-                </div>
-            `;
+                  <p class="text-sm text-slate-400">Logado como:</p>
+                  <div class="flex items-center gap-3 mt-2">
+                      <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white" style="background-color: ${user.color};">${user.name.charAt(0).toUpperCase()}</div>
+                      <span class="font-semibold">${user.name}</span>
+                  </div>
+              `;
 };
 
 // --- Lógica do WebSocket ---
 
 const connectWebSocket = () => {
-	// Use 'wss://' para produção com SSL
-	const wsUrl =
-		window.location.protocol === "https:"
-			? `wss://${window.location.host}`
-			: `https://chat-backend-90pn.onrender.com`;
+	// CORREÇÃO: Aponta diretamente para a URL do seu backend no Render.
+	// O protocolo 'wss://' é obrigatório para conexões seguras.
+	const wsUrl = "wss://chat-backend-90pn.onrender.com";
 
 	websocket = new WebSocket(wsUrl);
 
