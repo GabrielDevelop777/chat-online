@@ -1,6 +1,11 @@
- /* Estilização customizada para a barra de rolagem e animações */
+ /* Estilização customizada */
         body {
             font-family: 'Inter', sans-serif;
+        }
+
+        /* Usamos uma variável CSS para a altura, que será definida via JS */
+        :root {
+            --app-height: 100vh;
         }
 
         ::-webkit-scrollbar {
@@ -8,7 +13,7 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: #1e293b;
+            background: #1e2B3B;
         }
 
         ::-webkit-scrollbar-thumb {
