@@ -1,21 +1,29 @@
-// Elementos da DOM
+// --- CORREÇÃO PARA ALTURA EM DISPOSITIVOS MÓVEIS ---
+const setAppHeight = () => {
+	const doc = document.documentElement;
+	// Define a variável --app-height com a altura interna da janela
+	doc.style.setProperty("--app-height", `${window.innerHeight}px`);
+};
+// Adiciona um listener para o evento de redimensionar a tela (ex: rotação)
+window.addEventListener("resize", setAppHeight);
+// Chama a função na carga inicial
+setAppHeight();
+
+// --- DEMAIS SCRIPTS DO CHAT ---
+
 const loginScreen = document.getElementById("login-screen");
 const loginForm = document.getElementById("login-form");
 const loginInput = document.getElementById("login-input");
-
 const chatScreen = document.getElementById("chat-screen");
 const chatForm = document.getElementById("chat-form");
 const chatInput = document.getElementById("chat-input");
 const chatMessages = document.getElementById("chat-messages");
-
-// Elementos da Sidebar
 const sidebar = document.getElementById("sidebar");
 const onlineUsers = document.getElementById("online-users");
 const userInfo = document.getElementById("user-info");
 const toggleSidebarButton = document.getElementById("toggle-sidebar-button");
 const sidebarOverlay = document.getElementById("sidebar-overlay");
 
-// Estado do cliente
 const user = { id: "", name: "", color: "" };
 let websocket;
 let notificationPermission = "default";
@@ -32,8 +40,6 @@ const colors = [
 ];
 
 const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
-
-// --- Funções de Notificação ---
 
 const requestNotificationPermission = async () => {
 	if (!("Notification" in window)) {
@@ -55,8 +61,6 @@ const showNotification = (title, options) => {
 	}
 };
 
-// --- Funções de Renderização ---
-
 const scrollToBottom = () => {
 	chatMessages.scrollTop = chatMessages.scrollHeight;
 };
@@ -68,9 +72,9 @@ const renderUserList = (users) => {
 		userElement.className =
 			"flex items-center gap-3 p-2 rounded-lg mb-2 transition hover:bg-slate-700/50";
 		userElement.innerHTML = `
-                      <div class="w-3 h-3 rounded-full" style="background-color: ${u.color};"></div>
-                      <span class="font-medium text-slate-300">${u.name}</span>
-                  `;
+                    <div class="w-3 h-3 rounded-full" style="background-color: ${u.color};"></div>
+                    <span class="font-medium text-slate-300">${u.name}</span>
+                `;
 		onlineUsers.appendChild(userElement);
 	});
 };
@@ -93,16 +97,16 @@ const renderChatMessage = (message) => {
 	const avatar = `<div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0" style="background-color: ${sender.color};">${sender.name.charAt(0).toUpperCase()}</div>`;
 
 	const messageBubble = `
-                  <div class="max-w-xs lg:max-w-md">
-                      <div class="flex items-baseline gap-2 ${isSelf ? "justify-end" : ""}">
-                          <span class="font-bold text-sm" style="color: ${sender.color};">${isSelf ? "Você" : sender.name}</span>
-                          <span class="text-xs text-slate-500">${timestamp}</span>
-                      </div>
-                      <div class="mt-1 px-4 py-2 rounded-xl break-words ${isSelf ? "bg-indigo-600 rounded-br-none" : "bg-slate-700 rounded-bl-none"}">
-                          ${content}
-                      </div>
-                  </div>
-              `;
+                <div class="max-w-xs lg:max-w-md">
+                    <div class="flex items-baseline gap-2 ${isSelf ? "justify-end" : ""}">
+                        <span class="font-bold text-sm" style="color: ${sender.color};">${isSelf ? "Você" : sender.name}</span>
+                        <span class="text-xs text-slate-500">${timestamp}</span>
+                    </div>
+                    <div class="mt-1 px-4 py-2 rounded-xl break-words ${isSelf ? "bg-indigo-600 rounded-br-none" : "bg-slate-700 rounded-bl-none"}">
+                        ${content}
+                    </div>
+                </div>
+            `;
 
 	messageWrapper.innerHTML = isSelf
 		? messageBubble + avatar
@@ -113,20 +117,19 @@ const renderChatMessage = (message) => {
 
 const updateUserInfo = () => {
 	userInfo.innerHTML = `
-                  <p class="text-sm text-slate-400">Logado como:</p>
-                  <div class="flex items-center gap-3 mt-2">
-                      <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white" style="background-color: ${user.color};">${user.name.charAt(0).toUpperCase()}</div>
-                      <span class="font-semibold">${user.name}</span>
-                  </div>
-              `;
+                <p class="text-sm text-slate-400">Logado como:</p>
+                <div class="flex items-center gap-3 mt-2">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white" style="background-color: ${user.color};">${user.name.charAt(0).toUpperCase()}</div>
+                    <span class="font-semibold">${user.name}</span>
+                </div>
+            `;
 };
 
-// --- Lógica do WebSocket ---
-
 const connectWebSocket = () => {
-	// CORREÇÃO: Aponta diretamente para a URL do seu backend no Render.
-	// O protocolo 'wss://' é obrigatório para conexões seguras.
-	const wsUrl = "wss://chat-backend-90pn.onrender.com";
+	const wsUrl =
+		window.location.protocol === "https:"
+			? `wss://${window.location.host}`
+			: `ws://localhost:8080`;
 
 	websocket = new WebSocket(wsUrl);
 
@@ -185,8 +188,6 @@ const connectWebSocket = () => {
 	};
 };
 
-// --- Manipuladores de Eventos ---
-
 loginForm.addEventListener("submit", (event) => {
 	event.preventDefault();
 
@@ -202,7 +203,7 @@ loginForm.addEventListener("submit", (event) => {
 			chatScreen.classList.remove("hidden");
 			chatScreen.classList.add("flex", "fade-in");
 			connectWebSocket();
-			requestNotificationPermission(); // Pede permissão de notificação
+			requestNotificationPermission();
 		}, 500);
 	}
 });
@@ -221,8 +222,6 @@ chatForm.addEventListener("submit", (event) => {
 		chatInput.value = "";
 	}
 });
-
-// --- Lógica da Sidebar Responsiva ---
 
 const openSidebar = () => {
 	sidebar.classList.remove("-translate-x-full");
